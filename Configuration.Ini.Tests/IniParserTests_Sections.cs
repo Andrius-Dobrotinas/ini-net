@@ -106,6 +106,23 @@ namespace Andy.Configuration.Ini
 
         [TestCase("")]
         [TestCase(" ")]
+        [TestCase("     ")]
+        public void Should_Not_Treat_EmptyLines_AsEntries(string line)
+        {
+            var lines = new string[]
+            {
+                "[Section]",
+                line
+            };
+
+            var result = reader.Parse(lines);
+
+            entryParser.Verify(
+                x => x.Parse(
+                    It.IsAny<string>()),
+                Times.Never);
+        }
+
         [TestCase(";")]
         [TestCase(";asd")]
         [TestCase("; asd")]
@@ -113,6 +130,14 @@ namespace Andy.Configuration.Ini
         [TestCase("; key=value")]
         [TestCase(";[Section]")]
         [TestCase("; [Section]")]
+        [TestCase("#")]
+        [TestCase("#asd")]
+        [TestCase("# asd")]
+        [TestCase("#key=value")]
+        [TestCase("# key=value")]
+        [TestCase("#[Section]")]
+        [TestCase("# [Section]")]
+
         public void Should_Not_Treat_EmptyLines_And_Commentaries_AsEntries(string line)
         {
             var lines = new string[]

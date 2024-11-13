@@ -5,12 +5,15 @@ namespace Andy.Configuration.Ini
 {
     public interface IIniParser
     {
+        /// <summary>
+        /// Root section key is Empty String
+        /// </summary>
         IDictionary<string, IDictionary<string, string>> Parse(IEnumerable<string> lines);
     }
 
     public class IniParser : IIniParser
     {
-        public static readonly string DefaultSectionName = "";
+        public static readonly string RootSectionName = "";
         
         private readonly IEntryParser entryParser;
 
@@ -53,7 +56,7 @@ namespace Andy.Configuration.Ini
                         if (currentSection == null)
                         {
                             currentSection = new Dictionary<string, string>();
-                            result.Add(DefaultSectionName, currentSection);
+                            result.Add(RootSectionName, currentSection);
                         }
 
                         currentSection.Add(keyValuePair.Value.Key, keyValuePair.Value.Value);
@@ -67,7 +70,7 @@ namespace Andy.Configuration.Ini
         private static bool IsConfigEntry(string line)
         {
             var trimmedLine = line.Trim();
-            return trimmedLine != "" && !trimmedLine.StartsWith(';');
+            return !(trimmedLine == "" || trimmedLine.StartsWith(';') || trimmedLine.StartsWith('#'));
         }
     }
 }
